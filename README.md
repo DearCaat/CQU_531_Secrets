@@ -559,9 +559,9 @@ Add-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.11.2/3
 Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111.0/24 -PassThru
 ```
 
-##如何传输数据集
+## 如何传输数据集
 直接使用xftp进行拖拽
-###对于数目比较多的图片文件夹，可以使用Sftp进行传输
+### 对于数目比较多的图片文件夹，可以使用Sftp进行传输
 * 登录: sftp -P port user@ip  (-P 是大写)
 
 * 使用 ls 命令列出目录，使用 "cd CloudData" 命令进入数据根目录
