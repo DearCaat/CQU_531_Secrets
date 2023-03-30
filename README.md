@@ -32,6 +32,8 @@
   - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
   - [如何将Tensorflow模型转Pytorch](#如何将keras模型-tensorflow-转torch)
   - [如何仅让部分IP通过指定VPN](#如何仅让部分ip通过指定vpnwindows--默认vpn-修改路由)
+- [数据]()
+  - [如何在服务器之间或服务器与本地传输数据集](#如何传输数据集)
 
 ## 工具推荐
 
@@ -556,3 +558,18 @@ Add-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.11.2/3
 ```shell
 Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111.0/24 -PassThru
 ```
+
+##如何传输数据集
+直接使用xftp进行拖拽
+###对于数目比较多的图片文件夹，可以使用Sftp进行传输
+* 登录: sftp -P port user@ip  (-P 是大写)
+
+* 使用 ls 命令列出目录，使用 "cd CloudData" 命令进入数据根目录
+
+* 使用 "get <文件名>", 从云盘下载文件到本地当前目录
+
+* 使用 "get -r <文件夹名>", 从云盘下载目录到本地当前目录
+
+* 使用 "put <文件名>", 把当前目录的本地文件上传到云盘
+
+* 使用 "put  -r <文件夹名>", 把本地当前目录上传
