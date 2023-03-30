@@ -1,7 +1,12 @@
 # 重大软院531实验室秘籍
-我发现在研究生学习中遇到的很多问题都是相似的，不管是科研任务、代码实现、服务器管理。但一届一届的师兄师弟都在找着同样的资料，浪费着同样的时间。我希望这种经验贴能够帮助新老同学，新同学能够更快入门，老同学没必要去纠结自己一年前解决过的问题。个人能力有限，希望同学们一起分享、订正、补充 🤗。
+我发现在研究生学习中遇到的很多问题都是相似的，不管是科研任务、代码实现、服务器管理。但一届一届的师兄师弟都在找着同样的资料，浪费着同样的时间。我希望这种经验贴能够帮助新老同学，新同学能够更快入门，老同学没必要去纠结自己一年前解决过的问题。个人能力有限，希望同学们一起分享、订正、补充 (留下Issues或者直接联系我) 🤗。
 
 **Notes:** 很多内容没有具体详细的代码和指令，只会提供一个思路或者关键词，希望同学们能够善用**ChatGPT**、**Bing AI**、**Google** 😀。
+
+**Tips:**
+- 代码问题：优先查看相应的官方文档、Github官方仓库的Issues（很多软件或者包都是开源的，都有官方仓库，***特别是当你复现人家论文的时候，找到作者的仓库，然后直接看Issues或者提出Issues***）、Bing AI
+- 论文问题：最好看原文，再结合官方代码。知乎或者CSDN解析都差很多意思，而且最新的文章一般没有（该建议来自于其它大佬）
+- Latex问题：Bing AI、Google、Overleaf（Overleaf上其实有很多很多Latex相关的语法或者编译问题解答，文档较全，一般能解决问题）
 
 **Status:** 整理中~~~~~~~
 
@@ -9,25 +14,24 @@
 
 ## Table of Contents
 
+- [工具](#工具推荐)
 - [论文]()
   - [如何找论文](#如何找论文)
   - [如何写Pytoch格式的伪代码](#如何用latex-写-pytorch-pseudocode)
   - [如何插入多个参考文献小节](#如何在latex中引入多个bib)
-- [实验](#)
+- [实验]()
+  - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
   - [如何用更少显存更快更好跑实验 （AMP）](#如何用更少显存更快更好跑实验-amp)
   - [如何管理实验数据（使用Wandb+Git）](#如何管理实验数据-使用wandbgit)
   - [如何管理wandb服务器](#重新创建app)
   - [如何远程操作实验室电脑](#如何远程操作实验室电脑)
+  - [如何抢卡](#如何抢卡慎用慎用慎用)
   - [如何重装Ubuntu](#如何重装ubuntu)
   - [如何装Nvidia3件套](#安装nvidia驱动)
   - [如何在多个服务器之间同步代码](#如何在多个服务器之间同步代码)
   - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
   - [如何将Tensorflow模型转Pytorch](#如何将keras模型-tensorflow-转torch)
   - [如何仅让部分IP通过指定VPN](#如何仅让部分ip通过指定vpnwindows--默认vpn-修改路由)
-
-- [工具](#工具推荐)
-
-
 
 ## 工具推荐
 
@@ -74,6 +78,99 @@
 ### Rufus（ISO刻录软件）
 
 > 好用，重装系统推荐，特别是Linux
+
+
+## 如何找论文
+
+> - Google Scholar 关键词，建议先找综述
+> - 看最新顶会文章中的相关工作（很好用，一般来说**大组顶会**文章的相关工作做的非常详细）
+
+### easyScholar（浏览器插件）
+
+> 这个插件可以显示出论文发表期刊会议的CCF等级、所属出版商、IF、SCI分区等
+
+
+## 如何用Latex 写 Pytorch pseudocode 
+
+### 引入包
+
+```latex
+\usepackage[ruled,noline]{algorithm2e}
+\usepackage{setspace}  % change the margin
+
+\definecolor{commentcolor}{RGB}{110,154,155}   % define comment color
+\newcommand{\PyComment}[1]{\ttfamily\textcolor{commentcolor}{\# #1}}  % add a "#" before the input text "#1"
+\newcommand{\PyCode}[1]{\ttfamily\textcolor{black}{#1}} % \ttfamily is the code font
+```
+
+### 代码
+
+```latex
+\setlength{\algomargin}{0em}  % change the margin
+\SetAlFnt{\small}             % set the font size
+\begin{algorithm}[thb]
+	\setstretch{0.8}          % chagne the line spacing
+	\PyComment{this is a comment} \\
+    \PyComment{this is a comment} \\
+    \PyComment{} \\
+    \PyComment{going to have indentation} \\
+    \PyCode{for i in range(N):} \\
+    \Indp   % start indent
+        \PyComment{your comment} \\
+        \PyCode{your code} \PyComment{inline comment} \\ 
+        \Indm % end indent, must end with this, else all the below text will be indented
+        \PyComment{this is a comment} \\
+        \PyCode{your code}
+    \caption{PyTorch-style pseudocode for PicT testing scheme}
+    \label{algo:your-algo}
+\end{algorithm}
+```
+
+
+
+## 如何在Latex中引入多个bib
+
+[Creating multiple bibliographies in the same document - Overleaf, Online LaTeX Editor](https://www.overleaf.com/learn/latex/Questions/Creating_multiple_bibliographies_in_the_same_document#Packages_for_BibTeX)
+
+### 使用multibib包
+
+```latex
+\usepackage[resetlabels,labeled]{multibib}
+
+\newcites{Math}{Math Readings}
+\newcites{Phys}{Physics Readings}
+```
+
+```latex
+\cite{paper1} and \cite{paper2} were published later than 
+\citeMath{paper3}. See also \citePhys{paper4}.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\bibliographystyleMath{unsrt}
+\bibliographyMath{refs-etc}
+
+\bibliographystylePhys{unsrt}
+\bibliographyPhys{refs-etc}
+```
+
+> - 值得注意的是，使用该包会生成多个 .aux文件，必须对每个文件都进行bibtex编译后，再使用pdftex编译
+> - 每个部分的bib文件最好单独存放，并单独命令各自的引用文章简写
+
+
+
+## 如何在服务器上写代码（VSCode）
+
+> VSCode有ssh插件，可以直接通过ssh连接服务器，并支持直接编辑服务器上的文件。扩展可以直接装在服务器上
+>
+> Tips: 
+>
+> - 可以使用公钥，避免每次打开文件都需要输入密码。（如果你已经在服务器`A`上配置了公钥登录，那只需要配置VSCode的ssh配置文件即可）简单流程如下：
+>   - 本地主机创建公钥、私钥。公钥文件一般为`id_rsa.pub`，在`c:\Users\$username\.ssh\`下
+>   - 复制你的公钥内容至服务器`A`的密钥认证文件`/home/$username/.ssh/authorized_keys`中
+>   - 修改VSCode的ssh配置文件
+> - 如果遇到ssh问题，请查看VSCode的`output`，一般来说将服务器上的`VSCode Server (/home/$username/.vscode-server/bin/$bin_code)`进行删除可以解决大部分问题。可以在`output`中查看到`$bin_code`
 
 
 
@@ -139,8 +236,6 @@ wandb login --host=http://wandb.your-shared-local-host.com
 
 > 下面部分是管理wandb私人服务器，如果只是使用请忽略。至于如何在代码中使用wandb，请查询官方document
 
-
-
 ### 重新创建App
 
 不要对 ***Volumes*** 进行操作，这是保存数据的文件。可以删除 ***Containers*** ，然后在WSL中执行以下命令重新打开一个 ***APP***。 `--restart=always` 可以让容器每次随着docker服务启动
@@ -183,8 +278,6 @@ $ docker run \
     sh -c 'cd /place_to_paste && tar xf /files_to_copy/backup.tar .'
 ```
 
-
-
 ### 记录一次登录失败处理
 
 #### 情况：未知BUG，突然无法登录。
@@ -216,13 +309,7 @@ $ docker run \
 
 ### 向日葵
 
-## 如何找论文
-> - Google Scholar 关键词，建议先找综述
-> - 看最新顶会文章中的相关工作（很好用，一般来说**大组顶会**文章的相关工作做的非常详细）
 
-### easyScholar（浏览器插件）
-
-> 这个插件可以显示出论文发表期刊会议的CCF等级、所属出版商、IF、SCI分区等
 
 ## 如何在多个服务器之间同步代码
 
@@ -444,44 +531,6 @@ def keras_to_pyt(km, pm):
 
 
 
-## 如何用Latex 写 Pytorch pseudocode 
-
-### 引入包
-
-```latex
-\usepackage[ruled,noline]{algorithm2e}
-\usepackage{setspace}  % change the margin
-
-\definecolor{commentcolor}{RGB}{110,154,155}   % define comment color
-\newcommand{\PyComment}[1]{\ttfamily\textcolor{commentcolor}{\# #1}}  % add a "#" before the input text "#1"
-\newcommand{\PyCode}[1]{\ttfamily\textcolor{black}{#1}} % \ttfamily is the code font
-```
-
-### 代码
-
-```latex
-\setlength{\algomargin}{0em}  % change the margin
-\SetAlFnt{\small}             % set the font size
-\begin{algorithm}[thb]
-	\setstretch{0.8}          % chagne the line spacing
-	\PyComment{this is a comment} \\
-    \PyComment{this is a comment} \\
-    \PyComment{} \\
-    \PyComment{going to have indentation} \\
-    \PyCode{for i in range(N):} \\
-    \Indp   % start indent
-        \PyComment{your comment} \\
-        \PyCode{your code} \PyComment{inline comment} \\ 
-        \Indm % end indent, must end with this, else all the below text will be indented
-        \PyComment{this is a comment} \\
-        \PyCode{your code}
-    \caption{PyTorch-style pseudocode for PicT testing scheme}
-    \label{algo:your-algo}
-\end{algorithm}
-```
-
-
-
 ## 如何仅让部分IP通过指定VPN（Windows  默认VPN 修改路由）
 
 [Automatically Add Static Routes After Connecting to VPN | Windows OS Hub (woshub.com)](http://woshub.com/add-routes-after-connect-vpn-windows/)
@@ -507,36 +556,3 @@ Add-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.11.2/3
 ```shell
 Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111.0/24 -PassThru
 ```
-
-
-
-## 如何在Latex中引入多个bib
-
-[Creating multiple bibliographies in the same document - Overleaf, Online LaTeX Editor](https://www.overleaf.com/learn/latex/Questions/Creating_multiple_bibliographies_in_the_same_document#Packages_for_BibTeX)
-
-### 使用multibib包
-
-```latex
-\usepackage[resetlabels,labeled]{multibib}
-
-\newcites{Math}{Math Readings}
-\newcites{Phys}{Physics Readings}
-```
-
-```latex
-\cite{paper1} and \cite{paper2} were published later than 
-\citeMath{paper3}. See also \citePhys{paper4}.
-
-\bibliographystyle{unsrt}
-\bibliography{references}
-
-\bibliographystyleMath{unsrt}
-\bibliographyMath{refs-etc}
-
-\bibliographystylePhys{unsrt}
-\bibliographyPhys{refs-etc}
-```
-
-> - 值得注意的是，使用该包会生成多个 .aux文件，必须对每个文件都进行bibtex编译后，再使用pdftex编译
-> - 每个部分的bib文件最好单独存放，并单独命令各自的引用文章简写
-
