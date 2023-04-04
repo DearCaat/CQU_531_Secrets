@@ -1,9 +1,11 @@
 # 重大软院531实验室秘籍
+
 我发现在研究生学习中遇到的很多问题都是相似的，不管是科研任务、代码实现、服务器管理。但一届一届的师兄师弟都在找着同样的资料，浪费着同样的时间。我希望这种经验贴能够帮助新老同学，新同学能够更快入门，老同学没必要去纠结自己一年前解决过的问题。个人能力有限，希望同学们一起分享、订正、补充 (留下Issues或者直接联系我) 🤗。
 
 **Notes:** 很多内容没有具体详细的代码和指令，只会提供一个思路或者关键词，希望同学们能够善用**ChatGPT**、**Bing AI**、**Google** 😀。
 
 **Tips:**
+
 - 代码问题：优先查看相应的官方文档、Github官方仓库的Issues（很多软件或者包都是开源的，都有官方仓库，***特别是当你复现人家论文的时候，找到作者的仓库，然后直接看Issues或者提出Issues***）、Bing AI
 - 论文问题：最好看原文，再结合官方代码。知乎或者CSDN解析都差很多意思，而且最新的文章一般没有（该建议来自于其它大佬）
 - Latex问题：Bing AI、Google、Overleaf（Overleaf上其实有很多很多Latex相关的语法或者编译问题解答，文档较全，一般能解决问题）
@@ -20,6 +22,7 @@
   - [如何写Pytoch格式的伪代码](#如何用latex-写-pytorch-pseudocode)
   - [如何插入多个参考文献小节](#如何在latex中引入多个bib)
 - [实验]()
+  - [如何给服务器联网（dogcom）](#如何给服务器联网dogcom)
   - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
   - [如何用更少显存更快更好跑实验 （AMP）](#如何用更少显存更快更好跑实验-amp)
   - [如何管理实验数据（使用Wandb+Git）](#如何管理实验数据-使用wandbgit)
@@ -32,6 +35,7 @@
   - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
   - [如何将Tensorflow模型转Pytorch](#如何将keras模型-tensorflow-转torch)
   - [如何仅让部分IP通过指定VPN](#如何仅让部分ip通过指定vpnwindows--默认vpn-修改路由)
+
 - [数据]()
   - [如何在服务器之间或服务器与本地传输数据集](#如何传输数据集)
 
@@ -159,6 +163,34 @@
 
 > - 值得注意的是，使用该包会生成多个 .aux文件，必须对每个文件都进行bibtex编译后，再使用pdftex编译
 > - 每个部分的bib文件最好单独存放，并单独命令各自的引用文章简写
+
+
+
+## 如何给服务器联网（dogcom）
+
+> 现在外界流传的`dogcom`和`dogcom.conf`非常老，配置文件在个别服务器上出错，并且不能登出。我根据[drcom-generic/Drcom_CQU_HuxiCampus.py at master · drcoms/drcom-generic (github.com)](https://github.com/drcoms/drcom-generic/blob/master/custom/Drcom_CQU_HuxiCampus.py)重新写了一个python3的联网脚本，支持登出
+>
+> **Tips**：
+>
+> - 校园网使用哆点进行认证，github上有相关的仓库：[drcoms/drcom-generic: Dr.COM/DrCOM 现已覆盖 d p x三版。 (github.com)](https://github.com/drcoms/drcom-generic)、[mchome/dogcom at 309db8f545d7454b464a5d5d1d7dc4bde313f07a (github.com)](https://github.com/mchome/dogcom/tree/309db8f545d7454b464a5d5d1d7dc4bde313f07a)，如果有问题或者后续修改，可以查询相关仓库
+>
+> - `latest_w.py` 和 `dr.sh` 在 [`/tools/dogcom/`](https://github.com/DearCaat/CQU_531_Secrets/tools/dogcom/)下
+>
+> - 请修改`latest_w.py`文件中的34和35行，以使用自己的校园网账户进行登陆
+
+```bash
+# case1: 直接使用python文件登陆，这种情况会在终端显示log，并且随着终端的kill而kill，没有进程持久化
+python3 latest_w.py
+# case1: 按Ctrl+C，直接关闭该进程同时登出
+##########case2############
+# case2: 使用nohup维持进程持久化，我这里写了一个shell dr.sh
+bash dr.sh
+# case2: 这种情况下，请先使用ps找到你的python3进程
+ps -aux | grep python3
+# case2: 找到对应的 python3 latest_w.py 的进程号pid，kill该进程
+kill -9 pid
+# kill该进程的同时登出，相关的log会在./log下
+```
 
 
 
@@ -336,6 +368,7 @@ $ docker run \
 - **Tips**：就算在服务器`A`上，也要在另外一个目录放置代码，然后使用`git`进行代码管理，不能直接修改服务器`A`上的`git服务器`的代码。
 
 ### SyncTrayzor
+
 GitHub repo: https://github.com/canton7/SyncTrayzor
 
 
@@ -560,8 +593,11 @@ Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111
 ```
 
 ## 如何传输数据集
+
 直接使用xftp进行拖拽
+
 ### 对于数目比较多的图片文件夹，可以使用Sftp进行传输
+
 * 登录: sftp -P port user@ip  (-P 是大写)
 
 * 使用 ls 命令列出目录，使用 "cd CloudData" 命令进入数据根目录

@@ -1,0 +1,1 @@
+nohup python3 latest_w.py > log 2>&1 &
