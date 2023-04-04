@@ -174,15 +174,15 @@
 >
 > - 校园网使用哆点进行认证，github上有相关的仓库：[drcoms/drcom-generic: Dr.COM/DrCOM 现已覆盖 d p x三版。 (github.com)](https://github.com/drcoms/drcom-generic)、[mchome/dogcom at 309db8f545d7454b464a5d5d1d7dc4bde313f07a (github.com)](https://github.com/mchome/dogcom/tree/309db8f545d7454b464a5d5d1d7dc4bde313f07a)，如果有问题或者后续修改，可以查询相关仓库
 >
-> - `latest_w.py` 和 `dr.sh` 在 [`/tools/dogcom/`](https://github.com/DearCaat/CQU_531_Secrets/tools/dogcom/)下
+> - `latest_w.py` 和 `dr.sh` 在 [/tools/dogcom/](https://github.com/DearCaat/CQU_531_Secrets/tree/main/tools/dogcom)下
 >
-> - 请修改`latest_w.py`文件中的34和35行，以使用自己的校园网账户进行登陆
+> - 请修改`latest_w.py`文件中的34和35行 (`username`和`password`变量)，以使用自己的校园网账户进行登陆
 
 ```bash
 # case1: 直接使用python文件登陆，这种情况会在终端显示log，并且随着终端的kill而kill，没有进程持久化
 python3 latest_w.py
 # case1: 按Ctrl+C，直接关闭该进程同时登出
-##########case2############
+
 # case2: 使用nohup维持进程持久化，我这里写了一个shell dr.sh
 bash dr.sh
 # case2: 这种情况下，请先使用ps找到你的python3进程
