@@ -6,9 +6,10 @@
 
 **Tips:**
 
-- 代码问题：优先查看相应的官方文档、Github官方仓库的Issues（很多软件或者包都是开源的，都有官方仓库，***特别是当你复现人家论文的时候，找到作者的仓库，然后直接看Issues或者提出Issues***）、Bing AI
-- 论文问题：最好看原文，再结合官方代码。知乎或者CSDN解析都差很多意思，而且最新的文章一般没有（该建议来自于其它大佬）
-- Latex问题：Bing AI、Google、Overleaf（Overleaf上其实有很多很多Latex相关的语法或者编译问题解答，文档较全，一般能解决问题）
+- **代码问题**：优先查看相应的官方文档、Github官方仓库的Issues（很多软件或者包都是开源的，都有官方仓库，***特别是当你复现人家论文的时候，找到作者的仓库，然后直接看Issues或者提出Issues***）、Bing AI
+- **论文问题**：最好看原文，再结合官方代码。知乎或者CSDN解析都差很多意思，而且最新的文章一般没有（该建议来自于其它大佬）
+- **Latex问题**：Bing AI、Google、Overleaf（Overleaf上其实有很多很多Latex相关的语法或者编译问题解答，文档较全，一般能解决问题）
+- **Adobe破解**：https://baiyunju.cc/8602 （一般来说老的版本可以用[amt-emulator](https://amtemu-official.com/amtemu-v0-9-2-patcher/)，去破解`amtlib.ddl`，只要包含`amtlib.ddl`的版本应该都能破解，不仅仅是2017及以前。**但是vposy大神的版本感觉更好用更安全点，就是可能百度网盘下载速度有点问题，[这里](https://baiyunju.cc/10362)也有个妥协的办法**）
 
 **Status:** 整理中~~~~~~~
 
@@ -55,7 +56,8 @@
 
 > 个人认为重要程度大于Photoshop，很多时候你不能P图，但你需要处理PDF
 >
-> 破解版有需要联系学长
+> 破解版
+> [百度云](https://pan.baidu.com/s/1gTELjmDeXPM6F_fn-a7X4g?pwd=8hmq)，更多信息见[文章开头，Adobe破解部分](#重大软院531实验室秘籍)
 
 ### KeePass2（密码存储、多端同步）
 
