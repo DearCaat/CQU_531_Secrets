@@ -12,6 +12,12 @@
 - **Adobe破解**：https://baiyunju.cc/8602 （一般来说老的版本可以用[amt-emulator](https://amtemu-official.com/amtemu-v0-9-2-patcher/)，去破解`amtlib.ddl`，只要包含`amtlib.ddl`的版本应该都能破解，不仅仅是2017及以前。**但是vposy大神的版本感觉更好用更安全点，就是可能百度网盘下载速度有点问题，[这里](https://baiyunju.cc/10362)也有个妥协的办法**）
 - **实验问题**：推荐大家使用**Docker、Wandb、Git**管理自己的实验环境、数据、代码、模型。这可能是完成高质量实验的一个基础，有利于你实验结果的稳定性、可复现性、可扩展性 （***据我了解，在大组、公司这几乎是必须的流程***）
 
+**Resources:**
+
+- **wandb**： http://10.236.11.202:8080. 用户名和密码私下找我
+- **docker registry**: http://10.236.11.202:5000. 无需登陆
+- **New Bing (破解版)**: http://10.236.11.67:3001/
+
 **Status:** 整理中~~~~~~~
 
 
@@ -543,6 +549,12 @@ systemctl --user restart docker
 
 更多Rootless的 [TIPS](https://blog.pulipuli.info/2023/03/blog-post_19.html)
 
+#### **Ubuntu18.04有坑，按照官方教程无法正常安装**
+
+[Dockerd-rootless.sh not working on Ubuntu 18.04 because a dependency is missing (vpnkit or slirp4netns) · Issue #41781 · moby/moby (github.com)](https://github.com/moby/moby/issues/41781)
+
+- 需要手动安装[`slirp4netns`包]([Releases · rootless-containers/slirp4netns (github.com)](https://github.com/rootless-containers/slirp4netns/releases))，这个包无法通过apt-get安装
+
 ### 配置仓库镜像
 
 `daemon.json` 文件应该在 `~./config/docker/` 下
@@ -634,7 +646,7 @@ Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111
 
 ## Docker 支持CUDA
 
-### 安装[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#supported-platforms)
+### 安装[NVIDIA Container Toolkit]([Installation Guide — container-toolkit 1.13.1 documentation (nvidia.com)](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#docker))
 
 ***如果你是Root-less，有坑！！***
 
