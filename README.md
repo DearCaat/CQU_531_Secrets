@@ -10,6 +10,7 @@
 - **论文问题**：最好看原文，再结合官方代码。知乎或者CSDN解析都差很多意思，而且最新的文章一般没有（该建议来自于其它大佬）
 - **Latex问题**：Bing AI、Google、Overleaf（Overleaf上其实有很多很多Latex相关的语法或者编译问题解答，文档较全，一般能解决问题）
 - **Adobe破解**：https://baiyunju.cc/8602 （一般来说老的版本可以用[amt-emulator](https://amtemu-official.com/amtemu-v0-9-2-patcher/)，去破解`amtlib.ddl`，只要包含`amtlib.ddl`的版本应该都能破解，不仅仅是2017及以前。**但是vposy大神的版本感觉更好用更安全点，就是可能百度网盘下载速度有点问题，[这里](https://baiyunju.cc/10362)也有个妥协的办法**）
+- **实验问题**：推荐大家使用**Docker、Wandb、Git**管理自己的实验环境、数据、代码、模型。这可能是完成高质量实验的一个基础，有利于你实验结果的稳定性、可复现性、可扩展性 （***据我了解，在大组、公司这几乎是必须的流程***）
 
 **Status:** 整理中~~~~~~~
 
@@ -22,8 +23,17 @@
   - [如何找论文](#如何找论文)
   - [如何写Pytoch格式的伪代码](#如何用latex-写-pytorch-pseudocode)
   - [如何插入多个参考文献小节](#如何在latex中引入多个bib)
-  - [如何找到论文复现代码（较为重要）](#如何找到论文复现代码较为重要)
+  - [如何找到论文复现代码](#如何找到论文复现代码较为重要)
 - [实验]()
+  - [Docker相关]()
+    - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
+    - [如何在Docker中使用CUDA](#docker-支持cuda)
+    - [如何搭建私有仓库](#搭建私有docker-registry)
+  - [Linux相关（Ubuntu）]()
+    - [如何重装Ubuntu](#如何重装ubuntu)
+    - [如何在线更新Ubuntu](#在线升级ubuntu服务器)
+    - [如何装Nvidia3件套](#安装nvidia驱动)
+    - [如何给Ubuntu翻墙](#ubuntu配置clash)
   - [如何给服务器联网（dogcom）](#如何给服务器联网dogcom)
   - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
   - [如何用更少显存更快更好跑实验 （AMP）](#如何用更少显存更快更好跑实验-amp)
@@ -31,10 +41,7 @@
   - [如何管理wandb服务器](#重新创建app)
   - [如何远程操作实验室电脑](#如何远程操作实验室电脑)
   - [如何抢卡](#如何抢卡慎用慎用慎用)
-  - [如何重装Ubuntu](#如何重装ubuntu)
-  - [如何装Nvidia3件套](#安装nvidia驱动)
   - [如何在多个服务器之间同步代码](#如何在多个服务器之间同步代码)
-  - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
   - [如何将Tensorflow模型转Pytorch](#如何将keras模型-tensorflow-转torch)
   - [如何仅让部分IP通过指定VPN](#如何仅让部分ip通过指定vpnwindows--默认vpn-修改路由)
   - [如何在服务器之间或服务器与本地传输数据集](#如何传输数据集)
@@ -527,11 +534,22 @@ newgrep docker #更新用户组
 
 [Run the Docker daemon as a non-root user (Rootless mode) | Docker Documentation](https://docs.docker.com/engine/security/rootless/#known-limitations)
 
+**刷新配置，重启服务：**
+
+```shell
+systemctl --user daemon-reload
+systemctl --user restart docker
+```
+
+更多Rootless的 [TIPS](https://blog.pulipuli.info/2023/03/blog-post_19.html)
+
 ### 配置仓库镜像
 
 `daemon.json` 文件应该在 `~./config/docker/` 下
 
+***绝大多数mirror都无法正常使用，阿里云的已经不再更新，`dockerproxy.com`好像还行，不知道是个啥组织***
 
+***学校的网好像可以直接访问官方hub***
 
 ## 如何将Keras模型 (Tensorflow) 转Torch
 
@@ -608,13 +626,112 @@ Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111
 ### 对于数目比较多的图片文件夹，可以使用Sftp进行传输
 
 * 登录: sftp -P port user@ip  (-P 是大写)
-
 * 使用 ls 命令列出目录，使用 "cd CloudData" 命令进入数据根目录
-
 * 使用 "get <文件名>", 从云盘下载文件到本地当前目录
-
 * 使用 "get -r <文件夹名>", 从云盘下载目录到本地当前目录
-
 * 使用 "put <文件名>", 把当前目录的本地文件上传到云盘
-
 * 使用 "put  -r <文件夹名>", 把本地当前目录上传
+
+## Docker 支持CUDA
+
+### 安装[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#supported-platforms)
+
+***如果你是Root-less，有坑！！***
+
+- 下面命令会报错，因为Rootless的配置文件位置不同
+
+```shell
+sudo nvidia-ctk runtime configure --runtime=docker
+```
+
+这个时候建议你在普通Docker配置文件应在位置`/etc/docker`建一个文件，然后复制改写后的内容到Rootless的配置文件`.config/docker`下。
+
+- 还要记得改` /etc/nvidia-container-runtime/config.toml`，将里 面的`no-cgroups`设为`true`
+
+**Tips:**
+
+- 宿主主机的Driver版本跟你在Container中能用的CUDA版本挂钩，你Driver版本太低用不了高版本的CUDA。其中`495（cuda 11.5）和520 (cuda 11.8)`版本的driver几乎没有兼容性，宿主主机千万别是这俩。
+
+### 下载或者配置Image
+
+DockerHub 中 Torch和Nvidia官方的image都有`devel`这个版本，大小会比普通的`runtime`大很多。如果你需要在image中使用cuda编译某个包，就需要`devel`，如果你只是想用下`pytorch-gpu`那就完全没必要。nvidia的官方base-image还要选择是否使用`cudnn`
+
+## 在线升级Ubuntu服务器
+
+### 备份
+
+`sudo timeshift --help`
+
+### 升级
+
+[服务端升级Ubuntu 20.04 LTS 记录 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/136109436)
+
+- 不要无脑continue，一定要看清楚，保证网络畅通，记得提前更换apt源，不然肯定失败
+
+- 除了sshd的配置之外，其它配置都推荐不要维持原版本，sshd不知道也不会不会冲突，最后都用新的自己重新配置
+
+## Ubuntu配置Clash
+
+[Releases · Dreamacro/clash (github.com)](https://github.com/Dreamacro/clash/releases)
+
+需要手动下载[Country.mmdb](https://link.zhihu.com/?target=https%3A//gitee.com/mirrors/Pingtunnel/blob/master/GeoLite2-Country.mmdb)，将其改名为`Country.mmdb`
+
+下载`proxychains4`，配置目录`/etc/proxychains.conf`
+
+- 改为 `dynamic_chain`
+- 添加代理ip，好像不能添加`https`
+
+测试是否成功
+
+```shell
+proxychains4 curl www.httpbin.org/ip
+```
+
+**非root可能报错**，见[proxychains4配置使用 - 0xcreed - 博客园 (cnblogs.com)](https://www.cnblogs.com/mwq1024/p/11582003.html)
+
+**proxychains4 对docker无效，docker代理需要单独配置**
+
+## 搭建私有Docker Registry
+
+[使用docker-compose搭建私有docker registry - 落叶&不随风 - 博客园 (cnblogs.com)](https://www.cnblogs.com/xpengp/p/12714381.html)
+
+可以不做认证，关键在于
+
+- `daemon.json`写入：
+
+  ```json
+  {
+      "insecure-registries": [
+          "[私有仓库 ip:port]"
+      ]
+  }
+  ```
+
+  
+
+- `docker-compose.yaml`，该文件可以在任意位置，后续`-f`指定即可
+
+  ```yaml
+  version: '3'
+  
+  services:
+    registry:
+      image: registry:2
+      restart: "always"
+      ports:
+        - 5000:5000
+      volumes:
+        - $DATA_ROOT:/var/lib/registry
+  ```
+
+  ### 删除Image
+
+  [HTTP API V2 | Docker Documentation](https://docs.docker.com/registry/spec/api/#deleting-an-image)
+  
+  [Docker私有仓库Registry删除镜像的方法【20220321】 - 鬼谷子叔叔 - 个人主页 (tongfu.net)](https://tongfu.net/home/35/blog/513697.html)
+  
+  [docker私有镜像仓库搭建和镜像删除 - 简书 (jianshu.com)](https://www.jianshu.com/p/b93feaf43f37)
+
+  这个比较麻烦，总的来说，可以通过API的方法来删，但也需要修改container里面的config，位置在`/etc/docker/registry/config.yml`，然后查询`digest`，然后根据`digest`调用`DELETE` API进行删除，最后垃圾回收
+
+  第二个攻略说是没有删干净，但我发现其实主体文件通过以上步骤可以完全删除，只是会留下一个registry，占用空间很小
