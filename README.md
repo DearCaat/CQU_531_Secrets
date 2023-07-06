@@ -15,7 +15,7 @@
 **Resources:**
 
 - **wandb**： http://10.236.11.202:8080. 用户名和密码私下找我
-- **docker registry**: http://10.236.11.202:5000. 无需登陆
+- **docker registry**: http://10.236.11.202:5000. 用户名和密码私下找我
 - **New Bing (破解版)**: http://10.236.11.67:3001/
 
 **Status:** 整理中~~~~~~~
@@ -35,6 +35,7 @@
     - [如何在Rootless的情况下使用Docker](#如何在rootless的情况下使用docker)
     - [如何在Docker中使用CUDA](#docker-支持cuda)
     - [如何搭建私有仓库](#搭建私有docker-registry)
+    - [如何用Docker跑实验（持续更新中）](#用docker跑实验)
   - [Linux相关（Ubuntu）]()
     - [如何重装Ubuntu](#如何重装ubuntu)
     - [如何在线更新Ubuntu](#在线升级ubuntu服务器)
@@ -646,7 +647,7 @@ Remove-VpnConnectionRoute -ConnectionName workVPN -DestinationPrefix 192.168.111
 
 ## Docker 支持CUDA
 
-### 安装[NVIDIA Container Toolkit]([Installation Guide — container-toolkit 1.13.1 documentation (nvidia.com)](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#docker))
+### 安装[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#docker)
 
 ***如果你是Root-less，有坑！！***
 
@@ -662,7 +663,7 @@ sudo nvidia-ctk runtime configure --runtime=docker
 
 **Tips:**
 
-- 宿主主机的Driver版本跟你在Container中能用的CUDA版本挂钩，你Driver版本太低用不了高版本的CUDA。其中`495（cuda 11.5）和520 (cuda 11.8)`版本的driver几乎没有兼容性，宿主主机千万别是这俩。
+- 宿主主机的Driver版本跟你在Container中能用的CUDA版本挂钩，你Driver版本太低用不了高版本的CUDA。其中`495（cuda 11.5）和520 (cuda 11.8)`版本的driver几乎没有兼容性，宿主主机千万别是这俩。[CUDA兼容性问题（显卡驱动、docker内CUDA） - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/459431437)
 
 ### 下载或者配置Image
 
@@ -705,9 +706,21 @@ proxychains4 curl www.httpbin.org/ip
 
 ## 搭建私有Docker Registry
 
-[使用docker-compose搭建私有docker registry - 落叶&不随风 - 博客园 (cnblogs.com)](https://www.cnblogs.com/xpengp/p/12714381.html)
+~~[使用docker-compose搭建私有docker registry - 落叶&不随风 - 博客园 (cnblogs.com)](https://www.cnblogs.com/xpengp/p/12714381.html)~~
 
-可以不做认证，关键在于
+[Docker Compose 部署配置和使用 Registry 私有镜像仓库 - 思有云 - IOIOX](https://www.ioiox.com/archives/140.html)
+
+> TODO:
+>
+> - [ ] 令牌认证，对不同用户的权限进行规范
+
+- 启动一个一次性容器用于创建账号密码.密码文件路径以`/root/registry/htpasswd`为例,账号密码以`admin`和`12345678`为例.
+
+  ```shell
+  docker run --rm --entrypoint \
+      htpasswd httpd:2 -Bbn \
+      admin 12345678 > /root/registry/htpasswd
+  ```
 
 - `daemon.json`写入：
 
@@ -718,8 +731,6 @@ proxychains4 curl www.httpbin.org/ip
       ]
   }
   ```
-
-  
 
 - `docker-compose.yaml`，该文件可以在任意位置，后续`-f`指定即可
 
@@ -732,18 +743,91 @@ proxychains4 curl www.httpbin.org/ip
       restart: "always"
       ports:
         - 5000:5000
+      environment:
+        - REGISTRY_AUTH=htpasswd
+        - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+        - REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm
+        - REGISTRY_STORAGE_DELETE_ENABLED=true
       volumes:
         - $DATA_ROOT:/var/lib/registry
+        - $PASSWD_ROOT:/auth/htpasswd
   ```
 
-  ### 删除Image
 
-  [HTTP API V2 | Docker Documentation](https://docs.docker.com/registry/spec/api/#deleting-an-image)
-  
-  [Docker私有仓库Registry删除镜像的方法【20220321】 - 鬼谷子叔叔 - 个人主页 (tongfu.net)](https://tongfu.net/home/35/blog/513697.html)
-  
-  [docker私有镜像仓库搭建和镜像删除 - 简书 (jianshu.com)](https://www.jianshu.com/p/b93feaf43f37)
+- 使用`docker-compose`部署仓库
 
-  这个比较麻烦，总的来说，可以通过API的方法来删，但也需要修改container里面的config，位置在`/etc/docker/registry/config.yml`，然后查询`digest`，然后根据`digest`调用`DELETE` API进行删除，最后垃圾回收
+  ```shell
+  docker-compose -f $DOCKER_COMPOSE_CONFIG up -d
+  ```
 
-  第二个攻略说是没有删干净，但我发现其实主体文件通过以上步骤可以完全删除，只是会留下一个registry，占用空间很小
+
+### 删除Image
+
+[HTTP API V2 | Docker Documentation](https://docs.docker.com/registry/spec/api/#deleting-an-image)
+
+[Docker私有仓库Registry删除镜像的方法【20220321】 - 鬼谷子叔叔 - 个人主页 (tongfu.net)](https://tongfu.net/home/35/blog/513697.html)
+
+[docker私有镜像仓库搭建和镜像删除 - 简书 (jianshu.com)](https://www.jianshu.com/p/b93feaf43f37)
+
+这个比较麻烦，总的来说，可以通过API的方法来删，但也需要修改container里面的config，位置在`/etc/docker/registry/config.yml`，然后查询`digest`，然后根据`digest`调用`DELETE` API进行删除，最后垃圾回收
+
+第二个攻略说是没有删干净，但我发现其实主体文件通过以上步骤可以完全删除，只是会留下一个registry，占用空间很小
+
+## 用Docker跑实验
+
+### Image管理
+
+先看本地有什么现存的`image`
+
+```shell
+docker image ls
+```
+
+跑实验需要的特制化`image`都放在本地仓库中，通用的请查看 [Docker_Hub](https://hub.docker.com/)。先查看本地仓库有哪些`image`,本地仓库ip默认为`10.236.11.202:5000`
+
+```shell
+# 登陆本地仓库，输入账户名和密码
+docker login $LOCAL_REGISTRY_IP
+
+# 先查看有哪些image
+curl -u $USER:$PASSWD http://$LOCAL_REGISTRY_IP/v2/_catalog
+
+# 再查看具体的image下有哪些tag
+curl -u $USER:$PASSWD http://$LOCAL_REGISTRY_IP/$IMAGE_NAME/tags/list
+```
+
+`pull, push`,***非特殊情况，不要随意push image到本地仓库中，就算要push，也要在commit的时候做好comment，然后 tag写清楚。目前本地仓库没有做权限限制，登陆后就可以对上面的所有image做任何操作***
+
+```shell
+# PULL跟常规一样，只是要注意要在image前面加上本地仓库的Ip，否则会默认从docker_hub获取
+docker pull $LOCAL_REGISTRY_IP/$IMAGE_NAME:$TAG
+
+# push
+# push之前需要先commit一个本地的image
+docker commit -a $AUTHOR_NAME -m $COMMENT $CONTAINER $LOCAL_REGISTRY_IP/$IMAGE_NAME:$TAG
+docker push $LOCAL_REGISTRY_IP/$IMAGE_NAME:$TAG
+```
+
+### 跑实验
+
+先看是否创建了`container`:
+
+```shell
+docker ps -a
+```
+
+如果已经有创建好的container就不要再`run`
+
+```shell
+# 针对已经stopped的container
+docker start -a $CONTAINER_NAME
+
+# 针对还在运行中的container
+docker attach $CONTAINER_NAME
+```
+
+如果没有现存`container`，就直接从`run image`
+
+```shell
+docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output --name $CONTAINER_NAME $IMAGE_NAME
+```
