@@ -380,6 +380,10 @@ $ docker run \
 
 - 在服务器`A`上初始化`git服务器`其等效于远程仓库，获得目录`/home/$username/.../xx.git`
 
+  ```shell
+  git init --bare xx.git
+  ```
+
 - 在服务器`B,C,D,...`上添加远程仓库，通过ssh的形式
 
   ```shell
@@ -664,6 +668,7 @@ sudo nvidia-ctk runtime configure --runtime=docker
 **Tips:**
 
 - 宿主主机的Driver版本跟你在Container中能用的CUDA版本挂钩，你Driver版本太低用不了高版本的CUDA。其中`495（cuda 11.5）和520 (cuda 11.8)`版本的driver几乎没有兼容性，宿主主机千万别是这俩。[CUDA兼容性问题（显卡驱动、docker内CUDA） - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/459431437)
+- CUDA的Forward compatibility好像仅对Tesla架构的显卡有用，所以最好升级你的driver。[PyTorch的CUDA错误：Error 804: forward compatibility was attempted on non supported HW - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/361545761)
 
 ### 下载或者配置Image
 
@@ -826,8 +831,8 @@ docker start -a $CONTAINER_NAME
 docker attach $CONTAINER_NAME
 ```
 
-如果没有现存`container`，就直接从`run image`
+如果没有现存`container`，就直接从`run image`。要注意的是，`timm`库和`torch`的模型默认的权重文件存放在`./cache/huggingface`和`./cache/torch`中，最好也把这两个文件夹做映射避免在不同`image`中重复下载
 
 ```shell
-docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output --name $CONTAINER_NAME $IMAGE_NAME
+docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output -v $CACHE_DIR:/root/.cache/ --name $CONTAINER_NAME $IMAGE_NAME
 ```
