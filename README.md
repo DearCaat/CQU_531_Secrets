@@ -524,9 +524,7 @@ $ sudo chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn
 [docker命令 报Got permission denied while trying to connect to 错误 - ranh - 博客园 (cnblogs.com)](https://www.cnblogs.com/hwwei/p/16018100.html)
 
 ```shell
-sudo groupadd docker # 添加docker用户组
-sudo gpasswd -a $USER docker #将登录用户加入到docker用户组中
-newgrep docker #更新用户组
+sudo usermod -aG docker $username
 ```
 
 ### 使用Root-less Docker
@@ -788,7 +786,7 @@ proxychains4 curl www.httpbin.org/ip
 docker image ls
 ```
 
-跑实验需要的特制化`image`都放在本地仓库中，通用的请查看 [Docker_Hub](https://hub.docker.com/)。先查看本地仓库有哪些`image`,本地仓库ip默认为`10.236.11.202:5000`
+跑实验需要的特制化`image`都放在本地仓库中，通用的请查看 [Docker_Hub](https://hub.docker.com/)。先查看本地仓库有哪些`image`,本地仓库`ip`默认为`10.236.11.202:5000`
 
 ```shell
 # 登陆本地仓库，输入账户名和密码
@@ -831,8 +829,8 @@ docker start -a $CONTAINER_NAME
 docker attach $CONTAINER_NAME
 ```
 
-如果没有现存`container`，就直接从`run image`。要注意的是，`timm`库和`torch`的模型默认的权重文件存放在`./cache/huggingface`和`./cache/torch`中，最好也把这两个文件夹做映射避免在不同`image`中重复下载
+如果没有现存`container`，就直接从`run image`。要注意的是，`timm`库和`torch`的模型默认的权重文件存放在`./cache/huggingface`和`./cache/torch`中，最好也把这两个文件夹做映射避免在不同`image`中重复下载。尽量只映射`huggingface`和`torch`这两个子文件夹，`$LIB`就是`huggingface`或者`torch`。
 
 ```shell
-docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output -v $CACHE_DIR:/root/.cache/ --name $CONTAINER_NAME $IMAGE_NAME
+docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output -v $CACHE_DIR:/root/.cache/$LIB --name $CONTAINER_NAME $IMAGE_NAME
 ```
