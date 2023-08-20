@@ -832,5 +832,15 @@ docker attach $CONTAINER_NAME
 如果没有现存`container`，就直接从`run image`。要注意的是，`timm`库和`torch`的模型默认的权重文件存放在`./cache/huggingface`和`./cache/torch`中，最好也把这两个文件夹做映射避免在不同`image`中重复下载。尽量只映射`huggingface`和`torch`这两个子文件夹，`$LIB`就是`huggingface`或者`torch`。
 
 ```shell
-docker run --gpus all -it --shm-size 32g -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output -v $CACHE_DIR:/root/.cache/$LIB --name $CONTAINER_NAME $IMAGE_NAME
+docker run --gpus all -it --shm-size 32g -p $CONTAINER_SSH_PORT:22 -v $CODE_DIR:/workspace/code -v $DATASET_DIR:/workspace/dataset -v $OUTPUT_DIR:/workspace/output -v $CACHE_DIR:/root/.cache/$LIB --name $CONTAINER_NAME $IMAGE_NAME
 ```
+
+### SSH连接
+
+想要使用`ssh`连接`container`
+
+- 首先要在创建时进行端口映射`-p $CONTAINER_SSH_PORT:22` 
+
+- 将客户端公钥放入`/root/.ssh/authorized_keys`，可能需要创建该文件
+- 记得查看`container`中是否已经打开`ssh_server`服务：`service ssh start` 
+- 建议使用`tmux`进行实验，确保在`terminal`崩溃的情况下，实验能够继续
