@@ -39,7 +39,7 @@
   - [Linux相关（Ubuntu）]()
     - [如何重装Ubuntu](#如何重装ubuntu)
     - [如何在线更新Ubuntu](#在线升级ubuntu服务器)
-    - [如何装Nvidia3件套](#安装nvidia驱动)
+    - [如何装Nvidia3件套，nvidia-smi相关](#安装nvidia驱动)
     - [如何给Ubuntu翻墙](#ubuntu配置clash)
   - [如何给服务器联网（dogcom）](#如何给服务器联网dogcom)
   - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
@@ -460,6 +460,7 @@ sudo reboot
 
 > - 注意，安装的driver版本最好和CUDA版本相对应。各个CUDA版本的Doc：[CUDA Toolkit Archive | NVIDIA Developer](https://developer.nvidia.com/cuda-toolkit-archive)。在此处查看：[Release Notes :: CUDA Toolkit Documentation (nvidia.com)](https://docs.nvidia.com/cuda/archive/11.7.0/cuda-toolkit-release-notes/index.html)
 > - `nvidia-smi` 有时候很慢，注意更改持久模式：`sudo nvidia-persistenced --persistence-mode` 或者 `sudo nvidia-smi -pm 1`
+> - Ubuntu重启有可能找不到Driver，一般情况是内核进行了更新。使用`ls /usr/src`查看驱动版本号，然后生成导向模块`sudo dkms install -m nvidia(nvidia-srv) -v 530.30.02`。[Ubuntu20.04重启后找不到Nvidia显卡驱动 - keep-minding - 博客园 (cnblogs.com)](https://www.cnblogs.com/minding/p/17449134.html)
 
 #### 安装Driver
 
