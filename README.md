@@ -725,7 +725,7 @@ proxychains4 curl www.httpbin.org/ip
   # 查看 TYPE 和 UUID
   sudo blkid
   # 编辑 /etc/fstab文件
-  UUID=3CEA-3BCF /mnt/book $TYPE defaults,uid=1004,gid=1004 0 0
+  UUID=$UUID /mnt/book $TYPE defaults,uid=$UID,gid=$GID 0 0
   ```
 
 ## 搭建私有Docker Registry
