@@ -41,6 +41,7 @@
     - [如何在线更新Ubuntu](#在线升级ubuntu服务器)
     - [如何装Nvidia3件套，nvidia-smi相关](#安装nvidia驱动)
     - [如何给Ubuntu翻墙](#ubuntu配置clash)
+    - [如何挂载移动硬盘](#ubuntu下挂载移动硬盘并修改权限)
   - [如何给服务器联网（dogcom）](#如何给服务器联网dogcom)
   - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
   - [如何用更少显存更快更好跑实验 （AMP）](#如何用更少显存更快更好跑实验-amp)
@@ -707,6 +708,25 @@ proxychains4 curl www.httpbin.org/ip
 **非root可能报错**，见[proxychains4配置使用 - 0xcreed - 博客园 (cnblogs.com)](https://www.cnblogs.com/mwq1024/p/11582003.html)
 
 **proxychains4 对docker无效，docker代理需要单独配置**
+
+## Ubuntu下挂载移动硬盘并修改权限
+
+- 一次性，指定`uid`可以正常使用用户读写文件夹，不然权限错误
+
+  ```shell
+  sudo mount -o uid=$UID /dev/sdc1 /mnt/book
+  ```
+
+- 每次开机自动挂载
+
+  [ubuntu自动挂载硬盘实现所有用户可读写 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/163001267)
+
+  ```shell
+  # 查看 TYPE 和 UUID
+  sudo blkid
+  # 编辑 /etc/fstab文件
+  UUID=3CEA-3BCF /mnt/book $TYPE defaults,uid=1004,gid=1004 0 0
+  ```
 
 ## 搭建私有Docker Registry
 
