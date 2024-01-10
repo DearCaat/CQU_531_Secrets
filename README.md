@@ -42,6 +42,7 @@
     - [如何装Nvidia3件套，nvidia-smi相关](#安装nvidia驱动)
     - [如何给Ubuntu翻墙](#ubuntu配置clash)
     - [如何挂载移动硬盘](#ubuntu下挂载移动硬盘并修改权限)
+    - [跨网段传输文件，ssh连接](#跨网段ssh连接)
   - [如何给服务器联网（dogcom）](#如何给服务器联网dogcom)
   - [如何在服务器上写代码（VSCode）](#如何在服务器上写代码vscode)
   - [如何用更少显存更快更好跑实验 （AMP）](#如何用更少显存更快更好跑实验-amp)
@@ -727,6 +728,14 @@ proxychains4 curl www.httpbin.org/ip
   # 编辑 /etc/fstab文件
   UUID=$UUID /mnt/book $TYPE defaults,uid=$UID,gid=$GID 0 0
   ```
+
+## 跨网段ssh连接
+
+> 该问题核心在于内网穿透，但**ipv6**解决了该问题，因此下面都是基于通信两边都具有公网ipv6且已经解决了路由器问题和防火墙问题
+>
+> sftp: 要注意加上`-6`，不然默认会解析成ipv4的地址
+>
+> ssh: 直接使用ipv6地址即可
 
 ## 搭建私有Docker Registry
 
