@@ -874,3 +874,7 @@ docker run --gpus all -it --shm-size 32g -p $CONTAINER_SSH_PORT:22 -v $CODE_DIR:
 - 将客户端公钥放入`/root/.ssh/authorized_keys`，可能需要创建该文件
 - 记得查看`container`中是否已经打开`ssh_server`服务：`service ssh start` 
 - 建议使用`tmux`进行实验，确保在`terminal`崩溃的情况下，实验能够继续
+  
+### 网络相关
+
+- 最好直接使用`host`网络（`--network host`），跑实验用的`container`个人感觉不需要复杂的通讯，其带来的好处和便利非常诱人，例如：完整的`ipv6`支持
