@@ -54,6 +54,7 @@
   - [如何将Tensorflow模型转Pytorch](#如何将keras模型-tensorflow-转torch)
   - [如何仅让部分IP通过指定VPN](#如何仅让部分ip通过指定vpnwindows--默认vpn-修改路由)
   - [如何在服务器之间或服务器与本地传输数据集](#如何传输数据集)
+  - [显卡驱动掉了如何重装](#如何重装驱动)
 
 ## 工具推荐
 
@@ -849,6 +850,13 @@ docker push $LOCAL_REGISTRY_IP/$IMAGE_NAME:$TAG
 docker ps -a
 ```
 
+docker 管理工具推荐：portainer, 可以方便的删除，重启，暂停，重新配置docker容器。设定好docker容器的配置文件夹，可以很方便的迁移。
+```shell
+docker pull portainer/portainer
+docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock --restart=always --name prtainer portainer/portaine
+```
+
+
 如果已经有创建好的container就不要再`run`
 
 ```shell
@@ -878,3 +886,20 @@ docker run --gpus all -it --shm-size 32g -p $CONTAINER_SSH_PORT:22 -v $CODE_DIR:
 ### 网络相关
 
 - 最好直接使用`host`网络（`--network host`），跑实验用的`container`个人感觉不需要复杂的通讯，其带来的好处和便利非常诱人，例如：完整的`ipv6`支持
+
+### 重装驱动
+
+- 首先查看当前驱动版本
+```shell
+ls /usr/src | grep nvidia
+```
+- 重新安装现有的驱动版本
+```shell
+sudo dkms install -m nvidia -v 450.57 # 版本即使上一个命令的输出
+# 如果没有安装dkms包
+sudo apt-get install dkms
+```
+- 重启
+```shell
+sudo reboot
+```
