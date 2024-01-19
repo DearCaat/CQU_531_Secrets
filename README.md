@@ -520,6 +520,22 @@ $ sudo cp -P cudnn-*-archive/lib/libcudnn* /usr/local/cuda/lib64
 $ sudo chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
 ```
 
+#### 重装驱动
+
+- 首先查看当前驱动版本
+```shell
+ls /usr/src | grep nvidia
+```
+- 重新安装现有的驱动版本
+```shell
+sudo dkms install -m nvidia -v 450.57 # 版本即使上一个命令的输出
+# 如果没有安装dkms包
+sudo apt-get install dkms
+```
+- 重启
+```shell
+sudo reboot
+```
 
 
 ## 如何在RootLess的情况下使用Docker
@@ -888,19 +904,3 @@ docker run --gpus all -it --shm-size 32g -p $CONTAINER_SSH_PORT:22 -v $CODE_DIR:
 
 - 最好直接使用`host`网络（`--network host`），跑实验用的`container`个人感觉不需要复杂的通讯，其带来的好处和便利非常诱人，例如：完整的`ipv6`支持
 
-### 重装驱动
-
-- 首先查看当前驱动版本
-```shell
-ls /usr/src | grep nvidia
-```
-- 重新安装现有的驱动版本
-```shell
-sudo dkms install -m nvidia -v 450.57 # 版本即使上一个命令的输出
-# 如果没有安装dkms包
-sudo apt-get install dkms
-```
-- 重启
-```shell
-sudo reboot
-```
