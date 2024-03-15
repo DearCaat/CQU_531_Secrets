@@ -299,10 +299,10 @@ wandb login --host=http://wandb.your-shared-local-host.com
 
 ### 重新创建App
 
-不要对 ***Volumes*** 进行操作，这是保存数据的文件。可以删除 ***Containers*** ，然后在WSL中执行以下命令重新打开一个 ***APP***。 `--restart=always` 可以让容器每次随着docker服务启动
+不要对 ***Volumes*** 进行操作，这是保存数据的文件。可以删除 ***Containers*** ，然后在WSL中执行以下命令重新打开一个 ***APP***。 `--restart=always` 可以让容器每次随着docker服务启动。`-e HOST=http://$server_ip:8080`可以让wandb的前端界面正常和后端服务器交互信息，不然会默认为`127.0.0.1:8080`。
 
 ```shell
-docker run -d --mount type=volume,src=wandb,dst=/vol -p 8080:8080 --name wandb-local --restart=always wandb/local
+docker run -d --mount type=volume,src=wandb,dst=/vol -p 8080:8080 -e HOST=http://$server_ip:8080 --name wandb-local --restart=always wandb/local
 ```
 
 ### 更新Image
