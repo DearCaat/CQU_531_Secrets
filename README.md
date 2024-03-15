@@ -904,3 +904,10 @@ docker run --gpus all -it --shm-size 32g -p $CONTAINER_SSH_PORT:22 -v $CODE_DIR:
 
 - 最好直接使用`host`网络（`--network host`），跑实验用的`container`个人感觉不需要复杂的通讯，其带来的好处和便利非常诱人，例如：完整的`ipv6`支持
 
+### GIT相关
+
+- 一般来说不会想在`container`里面去支持ssh，然后去配置git仓库相关。因此，如果你是在`宿主主机`配置的git目录，然后映射到`container`中，那你最好运行以下命令：
+
+  ```
+  git config --global --add safe.directory /workspace/code
+  ```
