@@ -93,10 +93,10 @@
 ### KeePass2（密码存储、多端同步）
 
 > 推荐和OneDrive一起使用，一般来说OneDrive有送的5G空间。直接把数据库放在OneDrive上，实现多端同步，非常简单
-
+> 
 ### Typora（Markdown编辑器）
 
-> B站有破解教程，直接买也不贵
+> 有[破解教程](https://www.ghxi.com/typora.html)，直接买也不贵
 
 ### Notepad++（代码文本编辑器）
 
